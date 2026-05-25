@@ -3,41 +3,870 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CogniSort LLC</title>
+    <title>CogniSort | AI Nutrition & Fitness Coach</title>
+    <meta name="description" content="CogniSort is building an AI-powered health coach that turns food photos into nutrition records and creates personalized diet and workout plans.">
     <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; line-height: 1.6; color: #333; max-width: 800px; margin: 0 auto; padding: 40px 20px; background-color: #fafafa; }
-        header { text-align: center; margin-bottom: 60px; }
-        h1 { font-size: 2.5rem; color: #111; margin-bottom: 10px; }
-        .tagline { font-size: 1.2rem; color: #666; font-weight: 300; }
-        .section { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 40px; }
-        h2 { font-size: 1.5rem; color: #0071e3; margin-top: 0; }
-        .product-badge { display: inline-block; background: #e3f2fd; color: #0d47a1; padding: 4px 12px; border-radius: 20px; font-size: 0.85rem; font-weight: bold; margin-bottom: 15px; }
-        footer { text-align: center; margin-top: 60px; font-size: 0.9rem; color: #888; border-top: 1px solid #eee; padding-top: 20px; }
+        :root {
+            --ink: #111318;
+            --muted: #5d6573;
+            --soft: #f5f7fa;
+            --line: #e7ebf0;
+            --blue: #0071e3;
+            --blue-dark: #0458ad;
+            --green: #18a058;
+            --panel: #ffffff;
+            --shadow: 0 24px 80px rgba(22, 31, 47, 0.11);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            color: var(--ink);
+            background: #ffffff;
+            line-height: 1.5;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        .nav {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 24px;
+            width: 100%;
+            padding: 18px max(24px, calc((100vw - 1120px) / 2));
+            background: rgba(255, 255, 255, 0.82);
+            backdrop-filter: blur(22px);
+            border-bottom: 1px solid rgba(231, 235, 240, 0.72);
+        }
+
+        .brand {
+            font-weight: 700;
+            letter-spacing: 0;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            color: var(--muted);
+            font-size: 0.95rem;
+        }
+
+        .nav-links a:hover {
+            color: var(--ink);
+        }
+
+        .button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 44px;
+            padding: 0 20px;
+            border-radius: 999px;
+            background: var(--blue);
+            color: #ffffff;
+            font-weight: 650;
+            box-shadow: 0 12px 30px rgba(0, 113, 227, 0.24);
+        }
+
+        .button:hover {
+            background: var(--blue-dark);
+        }
+
+        .button.secondary {
+            background: #eef5ff;
+            color: var(--blue-dark);
+            box-shadow: none;
+        }
+
+        .language-switch {
+            display: inline-flex;
+            align-items: center;
+            padding: 3px;
+            border: 1px solid var(--line);
+            border-radius: 999px;
+            background: #ffffff;
+        }
+
+        .language-switch button {
+            min-width: 46px;
+            min-height: 34px;
+            padding: 0 12px;
+            border: 0;
+            border-radius: 999px;
+            background: transparent;
+            color: var(--muted);
+            font: inherit;
+            font-size: 0.88rem;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .language-switch button.active {
+            background: var(--ink);
+            color: #ffffff;
+        }
+
+        .hero {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(320px, 440px);
+            align-items: center;
+            gap: 70px;
+            max-width: 1120px;
+            min-height: calc(100vh - 80px);
+            margin: 0 auto;
+            padding: 74px 24px 92px;
+        }
+
+        .eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin: 0 0 18px;
+            color: var(--blue-dark);
+            font-size: 0.9rem;
+            font-weight: 700;
+            letter-spacing: 0.02em;
+        }
+
+        .eyebrow::before {
+            content: "";
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--green);
+        }
+
+        h1 {
+            max-width: 760px;
+            margin: 0;
+            font-size: clamp(3rem, 7vw, 6.8rem);
+            line-height: 0.96;
+            letter-spacing: -0.055em;
+        }
+
+        .hero p {
+            max-width: 650px;
+            margin: 26px 0 0;
+            color: var(--muted);
+            font-size: clamp(1.12rem, 2vw, 1.35rem);
+        }
+
+        .hero-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 34px;
+        }
+
+        .fine-print {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 18px;
+            margin-top: 28px;
+            color: #717a89;
+            font-size: 0.92rem;
+        }
+
+        .phone-wrap {
+            display: flex;
+            justify-content: center;
+        }
+
+        .phone {
+            width: min(100%, 372px);
+            padding: 14px;
+            border: 1px solid #dce2ea;
+            border-radius: 42px;
+            background: #111318;
+            box-shadow: var(--shadow);
+        }
+
+        .screen {
+            min-height: 690px;
+            overflow: hidden;
+            border-radius: 32px;
+            background: linear-gradient(180deg, #f8fbff 0%, #eef4fa 100%);
+        }
+
+        .screen-top {
+            padding: 24px 22px 16px;
+        }
+
+        .screen-status {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 22px;
+            color: #1d2733;
+            font-size: 0.8rem;
+            font-weight: 700;
+        }
+
+        .app-title {
+            margin: 0 0 6px;
+            font-size: 1.05rem;
+            font-weight: 800;
+        }
+
+        .app-subtitle {
+            margin: 0;
+            color: #657083;
+            font-size: 0.88rem;
+        }
+
+        .meal-photo {
+            position: relative;
+            margin: 12px 16px;
+            min-height: 214px;
+            border-radius: 28px;
+            background:
+                radial-gradient(circle at 52% 45%, #f9e2b7 0 17%, transparent 18%),
+                radial-gradient(circle at 38% 54%, #67b66b 0 9%, transparent 10%),
+                radial-gradient(circle at 64% 58%, #e95f4d 0 8%, transparent 9%),
+                radial-gradient(circle at 48% 66%, #fff6df 0 16%, transparent 17%),
+                linear-gradient(135deg, #d9e8f4, #f6f8fb 48%, #c8d8e8);
+            box-shadow: inset 0 0 0 1px rgba(255,255,255,0.5);
+        }
+
+        .scan-box {
+            position: absolute;
+            inset: 34px 44px 42px;
+            border: 2px solid rgba(255, 255, 255, 0.92);
+            border-radius: 24px;
+        }
+
+        .scan-pill {
+            position: absolute;
+            right: 18px;
+            bottom: 18px;
+            padding: 8px 12px;
+            border-radius: 999px;
+            background: rgba(17, 19, 24, 0.82);
+            color: #ffffff;
+            font-size: 0.78rem;
+            font-weight: 700;
+        }
+
+        .macro-card {
+            margin: 16px;
+            padding: 18px;
+            border: 1px solid rgba(222, 228, 236, 0.9);
+            border-radius: 26px;
+            background: rgba(255, 255, 255, 0.86);
+        }
+
+        .macro-card h3 {
+            margin: 0 0 12px;
+            font-size: 1rem;
+        }
+
+        .macro-row {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 12px;
+            padding: 10px 0;
+            border-top: 1px solid #edf1f5;
+            color: #5c6574;
+            font-size: 0.9rem;
+        }
+
+        .macro-row:first-of-type {
+            border-top: 0;
+        }
+
+        .macro-row strong {
+            color: var(--ink);
+        }
+
+        .coach-card {
+            margin: 0 16px 16px;
+            padding: 18px;
+            border-radius: 26px;
+            background: #111318;
+            color: #ffffff;
+        }
+
+        .coach-card p {
+            margin: 6px 0 0;
+            color: #c8d0dc;
+            font-size: 0.88rem;
+        }
+
+        .section {
+            padding: 96px 24px;
+        }
+
+        .section.soft {
+            background: var(--soft);
+        }
+
+        .inner {
+            max-width: 1120px;
+            margin: 0 auto;
+        }
+
+        .section-heading {
+            max-width: 780px;
+            margin-bottom: 44px;
+        }
+
+        h2 {
+            margin: 0;
+            font-size: clamp(2.2rem, 4vw, 4.5rem);
+            line-height: 1.02;
+            letter-spacing: -0.045em;
+        }
+
+        .section-heading p {
+            margin: 18px 0 0;
+            color: var(--muted);
+            font-size: 1.16rem;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 16px;
+        }
+
+        .feature {
+            min-height: 260px;
+            padding: 28px;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            background: var(--panel);
+        }
+
+        .feature-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 34px;
+            height: 34px;
+            margin-bottom: 40px;
+            border-radius: 50%;
+            background: #eef5ff;
+            color: var(--blue-dark);
+            font-weight: 800;
+        }
+
+        .feature h3 {
+            margin: 0 0 10px;
+            font-size: 1.25rem;
+            letter-spacing: -0.02em;
+        }
+
+        .feature p {
+            margin: 0;
+            color: var(--muted);
+        }
+
+        .split {
+            display: grid;
+            grid-template-columns: 0.94fr 1.06fr;
+            gap: 54px;
+            align-items: center;
+        }
+
+        .profile-panel {
+            display: grid;
+            gap: 12px;
+            padding: 18px;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            background: #ffffff;
+            box-shadow: 0 18px 60px rgba(22, 31, 47, 0.08);
+        }
+
+        .profile-row {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 18px;
+            padding: 18px;
+            border-radius: 8px;
+            background: #f8fafc;
+        }
+
+        .profile-row span {
+            color: var(--muted);
+        }
+
+        .profile-row strong {
+            text-align: right;
+        }
+
+        .plan-card {
+            padding: 26px;
+            border-radius: 8px;
+            background: #111318;
+            color: #ffffff;
+        }
+
+        .plan-card h3 {
+            margin: 0 0 16px;
+            font-size: 1.35rem;
+        }
+
+        .plan-list {
+            display: grid;
+            gap: 12px;
+            margin: 0;
+            padding: 0;
+            list-style: none;
+            color: #d8dee7;
+        }
+
+        .plan-list li {
+            padding-left: 24px;
+            position: relative;
+        }
+
+        .plan-list li::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 0.62em;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--green);
+        }
+
+        .trust {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 16px;
+            margin-top: 42px;
+        }
+
+        .trust-item {
+            padding: 24px;
+            border-radius: 8px;
+            background: #ffffff;
+            border: 1px solid var(--line);
+        }
+
+        .trust-item strong {
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .trust-item span {
+            color: var(--muted);
+            font-size: 0.94rem;
+        }
+
+        .cta {
+            max-width: 960px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .cta p {
+            max-width: 660px;
+            margin: 20px auto 32px;
+            color: var(--muted);
+            font-size: 1.16rem;
+        }
+
+        footer {
+            padding: 34px 24px;
+            border-top: 1px solid var(--line);
+            color: #707888;
+        }
+
+        .footer-inner {
+            display: flex;
+            justify-content: space-between;
+            gap: 18px;
+            max-width: 1120px;
+            margin: 0 auto;
+            font-size: 0.92rem;
+        }
+
+        @media (max-width: 900px) {
+            .hero,
+            .split {
+                grid-template-columns: 1fr;
+            }
+
+            .hero {
+                gap: 46px;
+                min-height: auto;
+                padding-top: 58px;
+            }
+
+            .phone {
+                max-width: 360px;
+            }
+
+            .feature-grid,
+            .trust {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 640px) {
+            .nav-links {
+                display: flex;
+                gap: 8px;
+            }
+
+            .nav-links > a {
+                display: none;
+            }
+
+            .nav {
+                align-items: center;
+            }
+
+            h1 {
+                font-size: 3.3rem;
+            }
+
+            .section {
+                padding: 72px 20px;
+            }
+
+            .feature-grid,
+            .trust {
+                grid-template-columns: 1fr;
+            }
+
+            .screen {
+                min-height: 640px;
+            }
+
+            .footer-inner {
+                flex-direction: column;
+            }
+        }
     </style>
 </head>
 <body>
+    <nav class="nav" aria-label="Main navigation">
+        <a class="brand" href="#">CogniSort</a>
+        <div class="nav-links">
+            <a href="#how" data-i18n="navHow">How it works</a>
+            <a href="#coach" data-i18n="navCoach">Personal coach</a>
+            <a href="#privacy" data-i18n="navPrivacy">Privacy</a>
+            <a class="button secondary" href="mailto:info@cognisort.com" data-i18n="navContact">Contact</a>
+            <div class="language-switch" aria-label="Language switch">
+                <button type="button" class="active" data-lang="en" aria-pressed="true">EN</button>
+                <button type="button" data-lang="zh" aria-pressed="false">中文</button>
+            </div>
+        </div>
+    </nav>
 
-    <header>
-        <h1>CogniSort LLC</h1>
-        <p class="tagline">Next-Generation Software Development & Data Analytics Solutions</p>
-    </header>
+    <main>
+        <section class="hero">
+            <div>
+                <p class="eyebrow" data-i18n="heroEyebrow">AI health app in development</p>
+                <h1 data-i18n="heroTitle">Track every meal with one photo.</h1>
+                <p data-i18n="heroBody">CogniSort is building a personal AI nutrition and fitness coach that recognizes food from a picture, estimates calories and macros, saves the record, and turns your body data into practical diet and workout guidance.</p>
+                <div class="hero-actions">
+                    <a class="button" href="mailto:info@cognisort.com" data-i18n="heroPrimary">Get early updates</a>
+                    <a class="button secondary" href="#how" data-i18n="heroSecondary">See how it works</a>
+                </div>
+                <div class="fine-print">
+                    <span data-i18n="heroPointOne">Photo-based food logging</span>
+                    <span data-i18n="heroPointTwo">Personal diet plans</span>
+                    <span data-i18n="heroPointThree">Workout recommendations</span>
+                </div>
+            </div>
 
-    <div class="section">
-        <h2>About Our Company</h2>
-        <p>CogniSort LLC is a technology startup based in Sunnyvale, California. We specialize in building cutting-edge mobile applications, custom software, and advanced data analytics solutions leveraging modern artificial intelligence and machine learning technologies.</p>
-    </div>
+            <div class="phone-wrap" aria-label="App preview">
+                <div class="phone">
+                    <div class="screen">
+                        <div class="screen-top">
+                            <div class="screen-status">
+                                <span>9:41</span>
+                                <span data-i18n="appStatus">AI Scan</span>
+                            </div>
+                            <p class="app-title" data-i18n="appTitle">Lunch detected</p>
+                            <p class="app-subtitle" data-i18n="appSubtitle">Review the estimate, then save it to today's log.</p>
+                        </div>
+                        <div class="meal-photo">
+                            <div class="scan-box"></div>
+                            <div class="scan-pill" data-i18n="appScan">Analyzing plate</div>
+                        </div>
+                        <div class="macro-card">
+                            <h3 data-i18n="nutritionEstimate">Nutrition estimate</h3>
+                            <div class="macro-row"><span data-i18n="calories">Calories</span><strong>612 kcal</strong></div>
+                            <div class="macro-row"><span data-i18n="protein">Protein</span><strong>38 g</strong></div>
+                            <div class="macro-row"><span data-i18n="carbs">Carbs</span><strong>54 g</strong></div>
+                            <div class="macro-row"><span data-i18n="fat">Fat</span><strong>24 g</strong></div>
+                        </div>
+                        <div class="coach-card">
+                            <strong data-i18n="coachNote">Coach note</strong>
+                            <p data-i18n="coachNoteBody">Add a 20-minute walk today to stay aligned with your weekly goal.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-    <div class="section">
-        <span class="product-badge">Flagship Project Under Development</span>
-        <h2>AI-Powered Diet & Fitness Tracker</h2>
-        <p>We are currently developing an intelligent iOS application focused on personalized health and nutrition. Utilizing advanced computer vision and machine learning models, our application allows users to seamlessly log meals, track dietary intake, analyze workout metrics, and receive real-time, personalized nutrition and training coaching to achieve their fitness goals.</p>
-    </div>
+        <section id="how" class="section soft">
+            <div class="inner">
+                <div class="section-heading">
+                    <h2 data-i18n="howTitle">Less typing. More understanding.</h2>
+                    <p data-i18n="howBody">The app is designed around the way people actually eat: quick meals, mixed plates, restaurant food, snacks, and days when manually entering every ingredient is too much work.</p>
+                </div>
+                <div class="feature-grid">
+                    <article class="feature">
+                        <span class="feature-number">1</span>
+                        <h3 data-i18n="stepOneTitle">Take a picture</h3>
+                        <p data-i18n="stepOneBody">Capture a meal with your camera instead of searching for each item one by one.</p>
+                    </article>
+                    <article class="feature">
+                        <span class="feature-number">2</span>
+                        <h3 data-i18n="stepTwoTitle">AI reads the plate</h3>
+                        <p data-i18n="stepTwoBody">Computer vision identifies likely foods, portion sizes, calories, macros, and key nutrition facts.</p>
+                    </article>
+                    <article class="feature">
+                        <span class="feature-number">3</span>
+                        <h3 data-i18n="stepThreeTitle">Save the record</h3>
+                        <p data-i18n="stepThreeBody">Review the estimate, make quick edits if needed, and keep a clean daily nutrition history.</p>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <section id="coach" class="section">
+            <div class="inner split">
+                <div class="section-heading">
+                    <h2 data-i18n="coachTitle">A coach shaped around you.</h2>
+                    <p data-i18n="coachBody">CogniSort can use personal details like age, height, weight, activity level, weekly workout days, goals, and eating preferences to suggest a plan that feels specific instead of generic.</p>
+                </div>
+
+                <div class="profile-panel">
+                    <div class="profile-row"><span data-i18n="goalLabel">Goal</span><strong data-i18n="goalValue">Lose fat, keep strength</strong></div>
+                    <div class="profile-row"><span data-i18n="trainingLabel">Training days</span><strong data-i18n="trainingValue">4 per week</strong></div>
+                    <div class="profile-row"><span data-i18n="dietLabel">Diet style</span><strong data-i18n="dietValue">High protein</strong></div>
+                    <div class="plan-card">
+                        <h3 data-i18n="todayPlan">Today&apos;s plan</h3>
+                        <ul class="plan-list">
+                            <li data-i18n="planOne">Target 1,950 calories with 135 grams of protein.</li>
+                            <li data-i18n="planTwo">Strength session: upper body, 45 minutes.</li>
+                            <li data-i18n="planThree">Dinner suggestion: salmon bowl with rice, greens, and avocado.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="privacy" class="section soft">
+            <div class="inner">
+                <div class="section-heading">
+                    <h2 data-i18n="trustTitle">Built for everyday trust.</h2>
+                    <p data-i18n="trustBody">Health products need to feel useful, calm, and respectful. The product direction keeps user control and clear nutrition estimates at the center.</p>
+                </div>
+                <div class="trust">
+                    <div class="trust-item">
+                        <strong data-i18n="trustOneTitle">Review before saving</strong>
+                        <span data-i18n="trustOneBody">Users can check and adjust AI estimates before they become part of the log.</span>
+                    </div>
+                    <div class="trust-item">
+                        <strong data-i18n="trustTwoTitle">Personal inputs</strong>
+                        <span data-i18n="trustTwoBody">Plans can adapt to body metrics, schedule, goals, and food preferences.</span>
+                    </div>
+                    <div class="trust-item">
+                        <strong data-i18n="trustThreeTitle">Clear progress</strong>
+                        <span data-i18n="trustThreeBody">Daily records help people see calories, macros, workouts, and trends over time.</span>
+                    </div>
+                    <div class="trust-item">
+                        <strong data-i18n="trustFourTitle">Human-centered AI</strong>
+                        <span data-i18n="trustFourBody">The goal is guidance that supports better choices without making the app feel complicated.</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section">
+            <div class="cta">
+                <h2 data-i18n="ctaTitle">Your deluxe health coach, simplified.</h2>
+                <p data-i18n="ctaBody">CogniSort LLC is developing AI-powered software for practical health tracking, personalized nutrition, and fitness planning.</p>
+                <a class="button" href="mailto:info@cognisort.com" data-i18n="ctaButton">Contact CogniSort</a>
+            </div>
+        </section>
+    </main>
 
     <footer>
-        <p><strong>CogniSort LLC</strong></p>
-        <p>Workplace Worksite: Sunnyvale, CA 94086 | Contact: info@cognisort.com</p>
-        <p style="font-size: 0.8rem; color: #bbb; margin-top: 10px;">&copy; 2026 CogniSort LLC. All rights reserved.</p>
+        <div class="footer-inner">
+            <span><strong>CogniSort LLC</strong> &middot; Sunnyvale, California</span>
+            <span>mainacc@cognisort.com &middot; &copy; 2026 CogniSort LLC</span>
+        </div>
     </footer>
+    <script>
+        const translations = {
+            en: {
+                pageTitle: "CogniSort | AI Nutrition & Fitness Coach",
+                pageDescription: "CogniSort is building an AI-powered health coach that turns food photos into nutrition records and creates personalized diet and workout plans.",
+                navHow: "How it works",
+                navCoach: "Personal coach",
+                navPrivacy: "Privacy",
+                navContact: "Contact",
+                heroEyebrow: "AI health app in development",
+                heroTitle: "Track every meal with one photo.",
+                heroBody: "CogniSort is building a personal AI nutrition and fitness coach that recognizes food from a picture, estimates calories and macros, saves the record, and turns your body data into practical diet and workout guidance.",
+                heroPrimary: "Get early updates",
+                heroSecondary: "See how it works",
+                heroPointOne: "Photo-based food logging",
+                heroPointTwo: "Personal diet plans",
+                heroPointThree: "Workout recommendations",
+                appStatus: "AI Scan",
+                appTitle: "Lunch detected",
+                appSubtitle: "Review the estimate, then save it to today's log.",
+                appScan: "Analyzing plate",
+                nutritionEstimate: "Nutrition estimate",
+                calories: "Calories",
+                protein: "Protein",
+                carbs: "Carbs",
+                fat: "Fat",
+                coachNote: "Coach note",
+                coachNoteBody: "Add a 20-minute walk today to stay aligned with your weekly goal.",
+                howTitle: "Less typing. More understanding.",
+                howBody: "The app is designed around the way people actually eat: quick meals, mixed plates, restaurant food, snacks, and days when manually entering every ingredient is too much work.",
+                stepOneTitle: "Take a picture",
+                stepOneBody: "Capture a meal with your camera instead of searching for each item one by one.",
+                stepTwoTitle: "AI reads the plate",
+                stepTwoBody: "Computer vision identifies likely foods, portion sizes, calories, macros, and key nutrition facts.",
+                stepThreeTitle: "Save the record",
+                stepThreeBody: "Review the estimate, make quick edits if needed, and keep a clean daily nutrition history.",
+                coachTitle: "A coach shaped around you.",
+                coachBody: "CogniSort can use personal details like age, height, weight, activity level, weekly workout days, goals, and eating preferences to suggest a plan that feels specific instead of generic.",
+                goalLabel: "Goal",
+                goalValue: "Lose fat, keep strength",
+                trainingLabel: "Training days",
+                trainingValue: "4 per week",
+                dietLabel: "Diet style",
+                dietValue: "High protein",
+                todayPlan: "Today's plan",
+                planOne: "Target 1,950 calories with 135 grams of protein.",
+                planTwo: "Strength session: upper body, 45 minutes.",
+                planThree: "Dinner suggestion: salmon bowl with rice, greens, and avocado.",
+                trustTitle: "Built for everyday trust.",
+                trustBody: "Health products need to feel useful, calm, and respectful. The product direction keeps user control and clear nutrition estimates at the center.",
+                trustOneTitle: "Review before saving",
+                trustOneBody: "Users can check and adjust AI estimates before they become part of the log.",
+                trustTwoTitle: "Personal inputs",
+                trustTwoBody: "Plans can adapt to body metrics, schedule, goals, and food preferences.",
+                trustThreeTitle: "Clear progress",
+                trustThreeBody: "Daily records help people see calories, macros, workouts, and trends over time.",
+                trustFourTitle: "Human-centered AI",
+                trustFourBody: "The goal is guidance that supports better choices without making the app feel complicated.",
+                ctaTitle: "Your deluxe health coach, simplified.",
+                ctaBody: "CogniSort LLC is developing AI-powered software for practical health tracking, personalized nutrition, and fitness planning.",
+                ctaButton: "Contact CogniSort"
+            },
+            zh: {
+                pageTitle: "CogniSort | AI 营养与健身教练",
+                pageDescription: "CogniSort 正在打造一款 AI 健康教练应用，通过食物照片自动生成营养记录，并提供个性化饮食和运动计划。",
+                navHow: "工作方式",
+                navCoach: "私人教练",
+                navPrivacy: "隐私与信任",
+                navContact: "联系我们",
+                heroEyebrow: "AI 健康应用开发中",
+                heroTitle: "拍一张照片，记录每一餐。",
+                heroBody: "CogniSort 正在打造一款个人 AI 营养与健身教练。它可以识别照片中的食物，估算热量和营养成分，自动保存记录，并根据你的身体数据提供实用的饮食和运动建议。",
+                heroPrimary: "获取最新进展",
+                heroSecondary: "了解工作方式",
+                heroPointOne: "拍照记录饮食",
+                heroPointTwo: "个性化饮食计划",
+                heroPointThree: "运动训练建议",
+                appStatus: "AI 扫描",
+                appTitle: "已识别午餐",
+                appSubtitle: "确认估算结果后，保存到今天的饮食记录。",
+                appScan: "正在分析餐盘",
+                nutritionEstimate: "营养估算",
+                calories: "热量",
+                protein: "蛋白质",
+                carbs: "碳水",
+                fat: "脂肪",
+                coachNote: "教练提示",
+                coachNoteBody: "今天增加 20 分钟步行，有助于保持本周目标进度。",
+                howTitle: "少输入，多了解。",
+                howBody: "这款应用围绕真实饮食场景设计：快餐、混合餐盘、餐厅食物、零食，以及那些不想手动逐项输入食材的日子。",
+                stepOneTitle: "拍摄食物照片",
+                stepOneBody: "用相机拍下这一餐，不需要逐个搜索每一种食物。",
+                stepTwoTitle: "AI 读取餐盘",
+                stepTwoBody: "计算机视觉识别可能的食物、份量、热量、宏量营养素和关键营养信息。",
+                stepThreeTitle: "保存饮食记录",
+                stepThreeBody: "检查估算结果，必要时快速修改，然后保存清晰的每日营养记录。",
+                coachTitle: "真正围绕你定制的健康教练。",
+                coachBody: "CogniSort 可以结合年龄、身高、体重、活动水平、每周训练天数、目标和饮食偏好，生成更具体、更贴合个人情况的建议。",
+                goalLabel: "目标",
+                goalValue: "减脂，同时保持力量",
+                trainingLabel: "训练天数",
+                trainingValue: "每周 4 天",
+                dietLabel: "饮食方式",
+                dietValue: "高蛋白",
+                todayPlan: "今日计划",
+                planOne: "目标摄入 1,950 千卡，并达到 135 克蛋白质。",
+                planTwo: "力量训练：上肢训练，45 分钟。",
+                planThree: "晚餐建议：三文鱼饭碗，搭配蔬菜和牛油果。",
+                trustTitle: "为日常使用建立信任。",
+                trustBody: "健康类产品需要有用、清晰、可靠。我们的产品方向会把用户控制权和透明的营养估算放在中心位置。",
+                trustOneTitle: "保存前可确认",
+                trustOneBody: "用户可以在保存前检查并调整 AI 估算结果。",
+                trustTwoTitle: "基于个人信息",
+                trustTwoBody: "计划可以根据身体数据、日程、目标和饮食偏好进行调整。",
+                trustThreeTitle: "进度清晰可见",
+                trustThreeBody: "每日记录帮助用户了解热量、宏量营养素、运动和长期趋势。",
+                trustFourTitle: "以人为中心的 AI",
+                trustFourBody: "目标是提供支持性指导，让用户更容易做出健康选择，而不是让应用变复杂。",
+                ctaTitle: "把高级私人健康教练，变得简单。",
+                ctaBody: "CogniSort LLC 正在开发面向健康记录、个性化营养和健身计划的 AI 软件。",
+                ctaButton: "联系 CogniSort"
+            }
+        };
 
+        const languageButtons = document.querySelectorAll("[data-lang]");
+        const translatableElements = document.querySelectorAll("[data-i18n]");
+        const metaDescription = document.querySelector("meta[name='description']");
+
+        function setLanguage(language) {
+            const copy = translations[language] || translations.en;
+
+            translatableElements.forEach((element) => {
+                const key = element.dataset.i18n;
+                if (copy[key]) {
+                    element.textContent = copy[key];
+                }
+            });
+
+            document.documentElement.lang = language === "zh" ? "zh-CN" : "en";
+            document.title = copy.pageTitle;
+            metaDescription.setAttribute("content", copy.pageDescription);
+            localStorage.setItem("cognisort-language", language);
+
+            languageButtons.forEach((button) => {
+                const isActive = button.dataset.lang === language;
+                button.classList.toggle("active", isActive);
+                button.setAttribute("aria-pressed", String(isActive));
+            });
+        }
+
+        languageButtons.forEach((button) => {
+            button.addEventListener("click", () => setLanguage(button.dataset.lang));
+        });
+
+        setLanguage(localStorage.getItem("cognisort-language") || "en");
+    </script>
 </body>
 </html>
