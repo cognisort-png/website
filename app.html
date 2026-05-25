@@ -1,0 +1,1175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CogniSort App Prototype</title>
+    <meta name="description" content="A working CogniSort prototype for AI food logging, nutrition tracking, and personalized health coaching.">
+    <style>
+        :root {
+            --ink: #111318;
+            --muted: #637083;
+            --soft: #f5f7fa;
+            --line: #e4e9f0;
+            --blue: #0071e3;
+            --blue-dark: #0458ad;
+            --green: #18a058;
+            --orange: #ff8a00;
+            --panel: #ffffff;
+            --danger: #c9362b;
+            --shadow: 0 18px 50px rgba(17, 24, 39, 0.09);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            color: var(--ink);
+            background: var(--soft);
+            line-height: 1.5;
+        }
+
+        button,
+        input,
+        select {
+            font: inherit;
+        }
+
+        button {
+            cursor: pointer;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        .shell {
+            display: grid;
+            grid-template-columns: 250px minmax(0, 1fr);
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+            padding: 24px;
+            border-right: 1px solid var(--line);
+            background: rgba(255, 255, 255, 0.86);
+            backdrop-filter: blur(22px);
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .brand strong {
+            display: block;
+            font-size: 1.08rem;
+        }
+
+        .brand span {
+            color: var(--muted);
+            font-size: 0.86rem;
+        }
+
+        .language-switch {
+            display: inline-flex;
+            padding: 3px;
+            border: 1px solid var(--line);
+            border-radius: 999px;
+            background: #ffffff;
+        }
+
+        .language-switch button {
+            min-width: 40px;
+            min-height: 30px;
+            border: 0;
+            border-radius: 999px;
+            background: transparent;
+            color: var(--muted);
+            font-size: 0.78rem;
+            font-weight: 800;
+        }
+
+        .language-switch button.active {
+            background: var(--ink);
+            color: #ffffff;
+        }
+
+        .nav {
+            display: grid;
+            gap: 8px;
+        }
+
+        .nav button,
+        .home-link {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+            min-height: 44px;
+            padding: 0 14px;
+            border: 0;
+            border-radius: 8px;
+            background: transparent;
+            color: var(--muted);
+            text-align: left;
+            font-weight: 700;
+        }
+
+        .nav button.active {
+            background: #eef5ff;
+            color: var(--blue-dark);
+        }
+
+        .home-link {
+            margin-top: auto;
+            border: 1px solid var(--line);
+            background: #ffffff;
+        }
+
+        .main {
+            padding: 28px;
+        }
+
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            gap: 18px;
+            margin-bottom: 24px;
+        }
+
+        h1,
+        h2,
+        h3,
+        p {
+            margin-top: 0;
+        }
+
+        h1 {
+            margin-bottom: 8px;
+            font-size: clamp(2rem, 4vw, 3.7rem);
+            line-height: 1;
+            letter-spacing: -0.045em;
+        }
+
+        .lead {
+            max-width: 760px;
+            margin-bottom: 0;
+            color: var(--muted);
+            font-size: 1.06rem;
+        }
+
+        .pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            width: fit-content;
+            min-height: 34px;
+            padding: 0 12px;
+            border-radius: 999px;
+            background: #eaf8f0;
+            color: #08743d;
+            font-size: 0.86rem;
+            font-weight: 800;
+            white-space: nowrap;
+        }
+
+        .view {
+            display: none;
+        }
+
+        .view.active {
+            display: block;
+        }
+
+        .grid {
+            display: grid;
+            gap: 16px;
+        }
+
+        .grid.two {
+            grid-template-columns: minmax(0, 1.1fr) minmax(320px, 0.9fr);
+        }
+
+        .grid.three {
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+
+        .card {
+            padding: 22px;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            background: var(--panel);
+            box-shadow: var(--shadow);
+        }
+
+        .card h2 {
+            margin-bottom: 14px;
+            font-size: 1.25rem;
+        }
+
+        .metric {
+            display: grid;
+            gap: 6px;
+        }
+
+        .metric span {
+            color: var(--muted);
+            font-size: 0.92rem;
+        }
+
+        .metric strong {
+            font-size: 2rem;
+            line-height: 1;
+            letter-spacing: -0.035em;
+        }
+
+        .progress {
+            height: 10px;
+            overflow: hidden;
+            border-radius: 999px;
+            background: #edf1f5;
+        }
+
+        .progress span {
+            display: block;
+            width: 0;
+            height: 100%;
+            border-radius: inherit;
+            background: var(--blue);
+            transition: width 180ms ease;
+        }
+
+        .upload-zone {
+            display: grid;
+            place-items: center;
+            min-height: 300px;
+            padding: 24px;
+            border: 1.5px dashed #c7d1dd;
+            border-radius: 8px;
+            background: #fbfcfe;
+            text-align: center;
+        }
+
+        .upload-zone img {
+            max-width: 100%;
+            max-height: 280px;
+            border-radius: 8px;
+            object-fit: cover;
+        }
+
+        .upload-zone input {
+            display: none;
+        }
+
+        .button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 44px;
+            padding: 0 18px;
+            border: 0;
+            border-radius: 999px;
+            background: var(--blue);
+            color: #ffffff;
+            font-weight: 800;
+        }
+
+        .button:hover {
+            background: var(--blue-dark);
+        }
+
+        .button.secondary {
+            border: 1px solid var(--line);
+            background: #ffffff;
+            color: var(--ink);
+        }
+
+        .button.danger {
+            background: #fff0ef;
+            color: var(--danger);
+        }
+
+        .actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 16px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 14px;
+        }
+
+        label {
+            display: grid;
+            gap: 7px;
+            color: var(--muted);
+            font-size: 0.88rem;
+            font-weight: 700;
+        }
+
+        input,
+        select {
+            width: 100%;
+            min-height: 44px;
+            padding: 0 12px;
+            border: 1px solid #d7dee8;
+            border-radius: 8px;
+            background: #ffffff;
+            color: var(--ink);
+        }
+
+        .result-card {
+            display: grid;
+            gap: 12px;
+        }
+
+        .macro-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 10px;
+        }
+
+        .macro {
+            padding: 14px;
+            border-radius: 8px;
+            background: #f7f9fc;
+        }
+
+        .macro span {
+            display: block;
+            color: var(--muted);
+            font-size: 0.82rem;
+            font-weight: 700;
+        }
+
+        .macro strong {
+            display: block;
+            margin-top: 6px;
+            font-size: 1.2rem;
+        }
+
+        .meal-list,
+        .coach-list {
+            display: grid;
+            gap: 10px;
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+
+        .meal-item,
+        .coach-list li {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) auto;
+            gap: 12px;
+            padding: 14px;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            background: #ffffff;
+        }
+
+        .meal-item span,
+        .coach-list span {
+            color: var(--muted);
+            font-size: 0.9rem;
+        }
+
+        .empty {
+            padding: 22px;
+            border: 1px dashed #cbd5e1;
+            border-radius: 8px;
+            color: var(--muted);
+            text-align: center;
+        }
+
+        .notice {
+            margin-top: 12px;
+            color: var(--muted);
+            font-size: 0.9rem;
+        }
+
+        .coach-hero {
+            display: grid;
+            gap: 16px;
+            padding: 24px;
+            border-radius: 8px;
+            background: #111318;
+            color: #ffffff;
+        }
+
+        .coach-hero p {
+            margin-bottom: 0;
+            color: #cbd5e1;
+        }
+
+        .split-line {
+            height: 1px;
+            margin: 18px 0;
+            background: var(--line);
+        }
+
+        @media (max-width: 980px) {
+            .shell {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                position: static;
+                height: auto;
+                padding: 16px;
+            }
+
+            .nav {
+                grid-template-columns: repeat(4, minmax(0, 1fr));
+            }
+
+            .home-link {
+                margin-top: 0;
+            }
+
+            .grid.two,
+            .grid.three {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .main {
+                padding: 18px;
+            }
+
+            .topbar {
+                flex-direction: column;
+            }
+
+            .nav {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .form-grid,
+            .macro-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .meal-item,
+            .coach-list li {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="shell">
+        <aside class="sidebar">
+            <div class="brand">
+                <div>
+                    <strong>CogniSort</strong>
+                    <span data-i18n="appLabel">Health Coach MVP</span>
+                </div>
+                <div class="language-switch" aria-label="Language switch">
+                    <button type="button" class="active" data-lang="en" aria-pressed="true">EN</button>
+                    <button type="button" data-lang="zh" aria-pressed="false">中文</button>
+                </div>
+            </div>
+
+            <nav class="nav" aria-label="App navigation">
+                <button type="button" class="active" data-view-target="dashboard" data-i18n="navDashboard">Dashboard</button>
+                <button type="button" data-view-target="scan" data-i18n="navScan">Meal scan</button>
+                <button type="button" data-view-target="coach" data-i18n="navCoach">AI coach</button>
+                <button type="button" data-view-target="profile" data-i18n="navProfile">Profile</button>
+            </nav>
+
+            <a class="home-link" href="index.html" data-i18n="backHome">Back to website</a>
+        </aside>
+
+        <main class="main">
+            <section id="dashboard" class="view active">
+                <div class="topbar">
+                    <div>
+                        <h1 data-i18n="dashboardTitle">Today at a glance.</h1>
+                        <p class="lead" data-i18n="dashboardLead">Track meals, review your nutrition, and keep your plan moving without manual food entry.</p>
+                    </div>
+                    <span class="pill" data-i18n="prototypePill">Prototype mode</span>
+                </div>
+
+                <div class="grid three">
+                    <div class="card metric">
+                        <span data-i18n="calorieTarget">Calories</span>
+                        <strong id="calorieScore">0 / 1950</strong>
+                        <div class="progress"><span id="calorieProgress"></span></div>
+                    </div>
+                    <div class="card metric">
+                        <span data-i18n="proteinTarget">Protein</span>
+                        <strong id="proteinScore">0 / 135g</strong>
+                        <div class="progress"><span id="proteinProgress"></span></div>
+                    </div>
+                    <div class="card metric">
+                        <span data-i18n="loggedMeals">Logged meals</span>
+                        <strong id="mealCount">0</strong>
+                        <div class="progress"><span id="mealProgress"></span></div>
+                    </div>
+                </div>
+
+                <div class="grid two" style="margin-top: 16px;">
+                    <div class="card">
+                        <h2 data-i18n="mealLogTitle">Meal log</h2>
+                        <ul id="mealList" class="meal-list"></ul>
+                    </div>
+                    <div class="card">
+                        <h2 data-i18n="nextActionTitle">Next smart action</h2>
+                        <p id="nextAction" class="lead"></p>
+                        <div class="actions">
+                            <button type="button" class="button" data-go-scan data-i18n="scanMealNow">Scan a meal</button>
+                            <button type="button" class="button secondary" data-view-target="coach" data-i18n="viewCoach">View coach plan</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="scan" class="view">
+                <div class="topbar">
+                    <div>
+                        <h1 data-i18n="scanTitle">Photo to nutrition.</h1>
+                        <p class="lead" data-i18n="scanLead">Upload a meal photo, run a simulated AI analysis, then review and save the result to your daily record.</p>
+                    </div>
+                </div>
+
+                <div class="grid two">
+                    <div class="card">
+                        <h2 data-i18n="uploadTitle">Meal photo</h2>
+                        <label class="upload-zone" for="mealPhoto">
+                            <input id="mealPhoto" type="file" accept="image/*">
+                            <div id="uploadEmpty">
+                                <strong data-i18n="uploadPrompt">Choose a food photo</strong>
+                                <p class="notice" data-i18n="uploadNote">For this MVP, the app simulates AI analysis locally. Real computer vision can be connected next.</p>
+                            </div>
+                            <img id="photoPreview" alt="Meal preview" hidden>
+                        </label>
+                        <div class="actions">
+                            <button type="button" id="analyzeButton" class="button" data-i18n="analyzeButton">Analyze photo</button>
+                            <button type="button" id="resetPhotoButton" class="button secondary" data-i18n="resetPhoto">Reset photo</button>
+                        </div>
+                    </div>
+
+                    <div class="card result-card">
+                        <h2 data-i18n="analysisTitle">AI estimate</h2>
+                        <label>
+                            <span data-i18n="mealNameLabel">Meal name</span>
+                            <input id="mealName" type="text" value="Chicken rice bowl">
+                        </label>
+                        <div class="macro-grid">
+                            <label class="macro">
+                                <span data-i18n="calories">Calories</span>
+                                <input id="caloriesInput" type="number" min="0" value="612">
+                            </label>
+                            <label class="macro">
+                                <span data-i18n="protein">Protein</span>
+                                <input id="proteinInput" type="number" min="0" value="38">
+                            </label>
+                            <label class="macro">
+                                <span data-i18n="carbs">Carbs</span>
+                                <input id="carbsInput" type="number" min="0" value="54">
+                            </label>
+                            <label class="macro">
+                                <span data-i18n="fat">Fat</span>
+                                <input id="fatInput" type="number" min="0" value="24">
+                            </label>
+                        </div>
+                        <p id="analysisNote" class="notice" data-i18n="analysisNote">Review the estimate before saving. Nutrition values are editable because AI food recognition should always allow user control.</p>
+                        <div class="actions">
+                            <button type="button" id="saveMealButton" class="button" data-i18n="saveMeal">Save meal</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="coach" class="view">
+                <div class="topbar">
+                    <div>
+                        <h1 data-i18n="coachTitle">Your personal plan.</h1>
+                        <p class="lead" data-i18n="coachLead">Recommendations adjust from your profile, goals, training schedule, and today's nutrition progress.</p>
+                    </div>
+                </div>
+
+                <div class="grid two">
+                    <div class="coach-hero">
+                        <span class="pill" data-i18n="coachPill">AI coach recommendation</span>
+                        <h2 id="coachHeadline">Build a high-protein day around steady energy.</h2>
+                        <p id="coachSummary"></p>
+                    </div>
+                    <div class="card">
+                        <h2 data-i18n="targetsTitle">Personal targets</h2>
+                        <div class="macro-grid">
+                            <div class="macro"><span data-i18n="calories">Calories</span><strong id="targetCalories">1950</strong></div>
+                            <div class="macro"><span data-i18n="protein">Protein</span><strong id="targetProtein">135g</strong></div>
+                            <div class="macro"><span data-i18n="carbs">Carbs</span><strong id="targetCarbs">210g</strong></div>
+                            <div class="macro"><span data-i18n="fat">Fat</span><strong id="targetFat">58g</strong></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid two" style="margin-top: 16px;">
+                    <div class="card">
+                        <h2 data-i18n="dietPlanTitle">Diet plan</h2>
+                        <ul id="dietPlan" class="coach-list"></ul>
+                    </div>
+                    <div class="card">
+                        <h2 data-i18n="workoutPlanTitle">Workout plan</h2>
+                        <ul id="workoutPlan" class="coach-list"></ul>
+                    </div>
+                </div>
+            </section>
+
+            <section id="profile" class="view">
+                <div class="topbar">
+                    <div>
+                        <h1 data-i18n="profileTitle">Tell the coach about you.</h1>
+                        <p class="lead" data-i18n="profileLead">These values drive calorie targets, macro suggestions, and workout recommendations.</p>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <form id="profileForm" class="form-grid">
+                        <label>
+                            <span data-i18n="ageLabel">Age</span>
+                            <input name="age" type="number" min="13" max="100" value="28">
+                        </label>
+                        <label>
+                            <span data-i18n="sexLabel">Sex</span>
+                            <select name="sex">
+                                <option value="female" data-i18n="female">Female</option>
+                                <option value="male" data-i18n="male">Male</option>
+                            </select>
+                        </label>
+                        <label>
+                            <span data-i18n="heightLabel">Height (cm)</span>
+                            <input name="height" type="number" min="100" max="240" value="170">
+                        </label>
+                        <label>
+                            <span data-i18n="weightLabel">Weight (kg)</span>
+                            <input name="weight" type="number" min="35" max="250" value="72">
+                        </label>
+                        <label>
+                            <span data-i18n="activityLabel">Activity level</span>
+                            <select name="activity">
+                                <option value="light" data-i18n="activityLight">Light</option>
+                                <option value="moderate" selected data-i18n="activityModerate">Moderate</option>
+                                <option value="active" data-i18n="activityActive">Active</option>
+                            </select>
+                        </label>
+                        <label>
+                            <span data-i18n="workoutsLabel">Workout days per week</span>
+                            <input name="workouts" type="number" min="0" max="7" value="4">
+                        </label>
+                        <label>
+                            <span data-i18n="goalLabel">Goal</span>
+                            <select name="goal">
+                                <option value="lose" selected data-i18n="goalLose">Lose fat</option>
+                                <option value="maintain" data-i18n="goalMaintain">Maintain weight</option>
+                                <option value="gain" data-i18n="goalGain">Build muscle</option>
+                            </select>
+                        </label>
+                        <label>
+                            <span data-i18n="dietLabel">Diet preference</span>
+                            <select name="diet">
+                                <option value="balanced" data-i18n="dietBalanced">Balanced</option>
+                                <option value="highProtein" selected data-i18n="dietHighProtein">High protein</option>
+                                <option value="vegetarian" data-i18n="dietVegetarian">Vegetarian</option>
+                            </select>
+                        </label>
+                    </form>
+                    <div class="actions">
+                        <button type="button" id="saveProfileButton" class="button" data-i18n="saveProfile">Save profile</button>
+                        <button type="button" id="clearDataButton" class="button danger" data-i18n="clearData">Clear local data</button>
+                    </div>
+                    <p class="notice" data-i18n="profileNote">This prototype stores data only in this browser. It is not a medical device and does not replace professional medical advice.</p>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        const stateKey = "cognisort-app-state";
+        const languageKey = "cognisort-app-language";
+
+        const translations = {
+            en: {
+                appLabel: "Health Coach MVP",
+                navDashboard: "Dashboard",
+                navScan: "Meal scan",
+                navCoach: "AI coach",
+                navProfile: "Profile",
+                backHome: "Back to website",
+                dashboardTitle: "Today at a glance.",
+                dashboardLead: "Track meals, review your nutrition, and keep your plan moving without manual food entry.",
+                prototypePill: "Prototype mode",
+                calorieTarget: "Calories",
+                proteinTarget: "Protein",
+                loggedMeals: "Logged meals",
+                mealLogTitle: "Meal log",
+                nextActionTitle: "Next smart action",
+                scanMealNow: "Scan a meal",
+                viewCoach: "View coach plan",
+                scanTitle: "Photo to nutrition.",
+                scanLead: "Upload a meal photo, run a simulated AI analysis, then review and save the result to your daily record.",
+                uploadTitle: "Meal photo",
+                uploadPrompt: "Choose a food photo",
+                uploadNote: "For this MVP, the app simulates AI analysis locally. Real computer vision can be connected next.",
+                analyzeButton: "Analyze photo",
+                resetPhoto: "Reset photo",
+                analysisTitle: "AI estimate",
+                mealNameLabel: "Meal name",
+                calories: "Calories",
+                protein: "Protein",
+                carbs: "Carbs",
+                fat: "Fat",
+                analysisNote: "Review the estimate before saving. Nutrition values are editable because AI food recognition should always allow user control.",
+                saveMeal: "Save meal",
+                coachTitle: "Your personal plan.",
+                coachLead: "Recommendations adjust from your profile, goals, training schedule, and today's nutrition progress.",
+                coachPill: "AI coach recommendation",
+                targetsTitle: "Personal targets",
+                dietPlanTitle: "Diet plan",
+                workoutPlanTitle: "Workout plan",
+                profileTitle: "Tell the coach about you.",
+                profileLead: "These values drive calorie targets, macro suggestions, and workout recommendations.",
+                ageLabel: "Age",
+                sexLabel: "Sex",
+                female: "Female",
+                male: "Male",
+                heightLabel: "Height (cm)",
+                weightLabel: "Weight (kg)",
+                activityLabel: "Activity level",
+                activityLight: "Light",
+                activityModerate: "Moderate",
+                activityActive: "Active",
+                workoutsLabel: "Workout days per week",
+                goalLabel: "Goal",
+                goalLose: "Lose fat",
+                goalMaintain: "Maintain weight",
+                goalGain: "Build muscle",
+                dietLabel: "Diet preference",
+                dietBalanced: "Balanced",
+                dietHighProtein: "High protein",
+                dietVegetarian: "Vegetarian",
+                saveProfile: "Save profile",
+                clearData: "Clear local data",
+                profileNote: "This prototype stores data only in this browser. It is not a medical device and does not replace professional medical advice.",
+                emptyMealLog: "No meals saved yet. Scan your first meal to start today's log.",
+                nextLow: "Start by scanning your next meal so the coach can understand today's nutrition pattern.",
+                nextProtein: "You are behind on protein. Try a lean protein source in your next meal.",
+                nextCalories: "You are close to today's calorie target. Keep dinner lighter and focus on protein and vegetables.",
+                nextBalanced: "Good progress today. Keep meals balanced and stay hydrated.",
+                savedMeal: "Meal saved to today's log.",
+                profileSaved: "Profile saved and your plan was recalculated.",
+                coachHeadlineLose: "Build a high-protein day around steady energy.",
+                coachHeadlineMaintain: "Keep calories steady and training consistent.",
+                coachHeadlineGain: "Fuel muscle growth with protein and controlled surplus.",
+                coachSummary: "Based on your profile, today's target is {calories} calories and {protein}g protein.",
+                dietOne: "Make each meal include a clear protein source.",
+                dietTwo: "Use vegetables or fruit to add volume without making logging complicated.",
+                dietThree: "Leave room for one flexible snack so the plan feels realistic.",
+                workoutRest: "Today can be a recovery day: walking, mobility, and light stretching.",
+                workoutLow: "Start with two full-body strength sessions and one cardio day this week.",
+                workoutHigh: "Prioritize strength training, then add easy cardio after sessions.",
+                workoutDaily: "Keep hard training days separated by recovery or mobility work.",
+                sampleMeals: ["Chicken rice bowl", "Salmon salad plate", "Beef noodle bowl", "Tofu vegetable rice", "Egg avocado toast"]
+            },
+            zh: {
+                appLabel: "健康教练 MVP",
+                navDashboard: "总览",
+                navScan: "拍照记录",
+                navCoach: "AI 教练",
+                navProfile: "个人资料",
+                backHome: "返回官网",
+                dashboardTitle: "今日总览。",
+                dashboardLead: "记录饮食、查看营养进度，并在不手动逐项输入食物的情况下推进你的健康计划。",
+                prototypePill: "原型模式",
+                calorieTarget: "热量",
+                proteinTarget: "蛋白质",
+                loggedMeals: "已记录餐数",
+                mealLogTitle: "饮食记录",
+                nextActionTitle: "下一步智能建议",
+                scanMealNow: "扫描一餐",
+                viewCoach: "查看教练计划",
+                scanTitle: "从照片到营养记录。",
+                scanLead: "上传食物照片，运行本地模拟 AI 分析，然后确认并保存到今日记录。",
+                uploadTitle: "食物照片",
+                uploadPrompt: "选择一张食物照片",
+                uploadNote: "在这个 MVP 中，应用会在本地模拟 AI 分析。下一步可以接入真实计算机视觉能力。",
+                analyzeButton: "分析照片",
+                resetPhoto: "重置照片",
+                analysisTitle: "AI 估算",
+                mealNameLabel: "餐食名称",
+                calories: "热量",
+                protein: "蛋白质",
+                carbs: "碳水",
+                fat: "脂肪",
+                analysisNote: "保存前请确认估算结果。营养数值可以编辑，因为 AI 食物识别应始终保留用户控制权。",
+                saveMeal: "保存餐食",
+                coachTitle: "你的个人计划。",
+                coachLead: "建议会根据个人资料、目标、训练安排和今日营养进度进行调整。",
+                coachPill: "AI 教练建议",
+                targetsTitle: "个人目标",
+                dietPlanTitle: "饮食计划",
+                workoutPlanTitle: "运动计划",
+                profileTitle: "告诉教练你的情况。",
+                profileLead: "这些信息会用于计算热量目标、宏量营养建议和训练计划。",
+                ageLabel: "年龄",
+                sexLabel: "性别",
+                female: "女性",
+                male: "男性",
+                heightLabel: "身高（厘米）",
+                weightLabel: "体重（公斤）",
+                activityLabel: "活动水平",
+                activityLight: "较少活动",
+                activityModerate: "中等活动",
+                activityActive: "较高活动",
+                workoutsLabel: "每周训练天数",
+                goalLabel: "目标",
+                goalLose: "减脂",
+                goalMaintain: "保持体重",
+                goalGain: "增肌",
+                dietLabel: "饮食偏好",
+                dietBalanced: "均衡饮食",
+                dietHighProtein: "高蛋白",
+                dietVegetarian: "素食",
+                saveProfile: "保存资料",
+                clearData: "清除本地数据",
+                profileNote: "此原型只把数据存储在当前浏览器中。它不是医疗设备，也不能替代专业医疗建议。",
+                emptyMealLog: "还没有保存餐食。扫描第一餐，开始今天的记录。",
+                nextLow: "先扫描下一餐，让教练了解你今天的饮食模式。",
+                nextProtein: "你的蛋白质进度偏低。下一餐可以加入优质蛋白来源。",
+                nextCalories: "你已经接近今天的热量目标。晚餐可以清淡一些，重点放在蛋白质和蔬菜。",
+                nextBalanced: "今天进度不错。保持饮食均衡，并注意补水。",
+                savedMeal: "餐食已保存到今日记录。",
+                profileSaved: "资料已保存，计划已重新计算。",
+                coachHeadlineLose: "用高蛋白饮食维持稳定能量。",
+                coachHeadlineMaintain: "保持热量稳定，训练持续推进。",
+                coachHeadlineGain: "用充足蛋白和适度热量盈余支持增肌。",
+                coachSummary: "根据你的资料，今日目标为 {calories} 千卡和 {protein} 克蛋白质。",
+                dietOne: "每一餐都安排明确的蛋白质来源。",
+                dietTwo: "用蔬菜或水果增加饱腹感，同时避免记录变复杂。",
+                dietThree: "给自己留一个灵活加餐，让计划更容易坚持。",
+                workoutRest: "今天可以作为恢复日：步行、灵活性训练和轻度拉伸。",
+                workoutLow: "本周先安排两次全身力量训练和一次有氧训练。",
+                workoutHigh: "优先力量训练，再在训练后加入轻松有氧。",
+                workoutDaily: "高强度训练日之间加入恢复或灵活性训练。",
+                sampleMeals: ["鸡肉米饭碗", "三文鱼沙拉", "牛肉面", "豆腐蔬菜饭", "鸡蛋牛油果吐司"]
+            }
+        };
+
+        const defaultState = {
+            profile: {
+                age: 28,
+                sex: "female",
+                height: 170,
+                weight: 72,
+                activity: "moderate",
+                workouts: 4,
+                goal: "lose",
+                diet: "highProtein"
+            },
+            meals: []
+        };
+
+        let state = loadState();
+        let language = localStorage.getItem(languageKey) || "en";
+
+        const elements = {
+            views: document.querySelectorAll(".view"),
+            navButtons: document.querySelectorAll("[data-view-target]"),
+            languageButtons: document.querySelectorAll("[data-lang]"),
+            translatable: document.querySelectorAll("[data-i18n]"),
+            mealPhoto: document.getElementById("mealPhoto"),
+            photoPreview: document.getElementById("photoPreview"),
+            uploadEmpty: document.getElementById("uploadEmpty"),
+            analyzeButton: document.getElementById("analyzeButton"),
+            resetPhotoButton: document.getElementById("resetPhotoButton"),
+            saveMealButton: document.getElementById("saveMealButton"),
+            mealName: document.getElementById("mealName"),
+            caloriesInput: document.getElementById("caloriesInput"),
+            proteinInput: document.getElementById("proteinInput"),
+            carbsInput: document.getElementById("carbsInput"),
+            fatInput: document.getElementById("fatInput"),
+            analysisNote: document.getElementById("analysisNote"),
+            mealList: document.getElementById("mealList"),
+            profileForm: document.getElementById("profileForm"),
+            saveProfileButton: document.getElementById("saveProfileButton"),
+            clearDataButton: document.getElementById("clearDataButton"),
+            nextAction: document.getElementById("nextAction")
+        };
+
+        function loadState() {
+            try {
+                return JSON.parse(localStorage.getItem(stateKey)) || structuredClone(defaultState);
+            } catch {
+                return structuredClone(defaultState);
+            }
+        }
+
+        function saveState() {
+            localStorage.setItem(stateKey, JSON.stringify(state));
+        }
+
+        function copy() {
+            return translations[language] || translations.en;
+        }
+
+        function setLanguage(nextLanguage) {
+            language = nextLanguage;
+            localStorage.setItem(languageKey, language);
+            document.documentElement.lang = language === "zh" ? "zh-CN" : "en";
+
+            elements.translatable.forEach((element) => {
+                const value = copy()[element.dataset.i18n];
+                if (value) {
+                    element.textContent = value;
+                }
+            });
+
+            elements.languageButtons.forEach((button) => {
+                const active = button.dataset.lang === language;
+                button.classList.toggle("active", active);
+                button.setAttribute("aria-pressed", String(active));
+            });
+
+            render();
+        }
+
+        function showView(viewId) {
+            elements.views.forEach((view) => view.classList.toggle("active", view.id === viewId));
+            elements.navButtons.forEach((button) => {
+                button.classList.toggle("active", button.dataset.viewTarget === viewId);
+            });
+        }
+
+        function targets() {
+            const profile = state.profile;
+            const weight = Number(profile.weight);
+            const height = Number(profile.height);
+            const age = Number(profile.age);
+            const sexOffset = profile.sex === "male" ? 5 : -161;
+            const bmr = (10 * weight) + (6.25 * height) - (5 * age) + sexOffset;
+            const activity = { light: 1.35, moderate: 1.5, active: 1.7 }[profile.activity] || 1.5;
+            const goalOffset = { lose: -350, maintain: 0, gain: 300 }[profile.goal] || 0;
+            const calories = Math.max(1300, Math.round((bmr * activity + goalOffset) / 10) * 10);
+            const proteinMultiplier = profile.diet === "highProtein" ? 1.9 : 1.6;
+            const protein = Math.round(weight * proteinMultiplier);
+            const fat = Math.round((calories * 0.27) / 9);
+            const carbs = Math.max(80, Math.round((calories - protein * 4 - fat * 9) / 4));
+            return { calories, protein, carbs, fat };
+        }
+
+        function totals() {
+            return state.meals.reduce((sum, meal) => ({
+                calories: sum.calories + meal.calories,
+                protein: sum.protein + meal.protein,
+                carbs: sum.carbs + meal.carbs,
+                fat: sum.fat + meal.fat
+            }), { calories: 0, protein: 0, carbs: 0, fat: 0 });
+        }
+
+        function percent(value, target) {
+            return `${Math.min(100, Math.round((value / target) * 100))}%`;
+        }
+
+        function render() {
+            const goal = targets();
+            const total = totals();
+            document.getElementById("calorieScore").textContent = `${total.calories} / ${goal.calories}`;
+            document.getElementById("proteinScore").textContent = `${total.protein} / ${goal.protein}g`;
+            document.getElementById("mealCount").textContent = String(state.meals.length);
+            document.getElementById("calorieProgress").style.width = percent(total.calories, goal.calories);
+            document.getElementById("proteinProgress").style.width = percent(total.protein, goal.protein);
+            document.getElementById("mealProgress").style.width = percent(state.meals.length, 4);
+            document.getElementById("targetCalories").textContent = goal.calories;
+            document.getElementById("targetProtein").textContent = `${goal.protein}g`;
+            document.getElementById("targetCarbs").textContent = `${goal.carbs}g`;
+            document.getElementById("targetFat").textContent = `${goal.fat}g`;
+            renderMealList();
+            renderCoach(goal, total);
+            renderProfileForm();
+        }
+
+        function renderMealList() {
+            if (!state.meals.length) {
+                elements.mealList.innerHTML = `<li class="empty">${copy().emptyMealLog}</li>`;
+                return;
+            }
+
+            elements.mealList.innerHTML = state.meals.map((meal) => `
+                <li class="meal-item">
+                    <div>
+                        <strong>${meal.name}</strong>
+                        <span>${meal.protein}g ${copy().protein} · ${meal.carbs}g ${copy().carbs} · ${meal.fat}g ${copy().fat}</span>
+                    </div>
+                    <strong>${meal.calories} kcal</strong>
+                </li>
+            `).join("");
+        }
+
+        function renderCoach(goal, total) {
+            const headlineKey = {
+                lose: "coachHeadlineLose",
+                maintain: "coachHeadlineMaintain",
+                gain: "coachHeadlineGain"
+            }[state.profile.goal] || "coachHeadlineLose";
+
+            document.getElementById("coachHeadline").textContent = copy()[headlineKey];
+            document.getElementById("coachSummary").textContent = copy().coachSummary
+                .replace("{calories}", goal.calories)
+                .replace("{protein}", goal.protein);
+
+            const dietItems = [
+                copy().dietOne,
+                copy().dietTwo,
+                copy().dietThree
+            ];
+
+            const workoutDays = Number(state.profile.workouts);
+            const workoutAdvice = workoutDays === 0
+                ? copy().workoutRest
+                : workoutDays <= 3
+                    ? copy().workoutLow
+                    : workoutDays <= 5
+                        ? copy().workoutHigh
+                        : copy().workoutDaily;
+
+            document.getElementById("dietPlan").innerHTML = dietItems
+                .map((item) => `<li><strong>${item}</strong><span>${Math.max(0, goal.calories - total.calories)} kcal remaining</span></li>`)
+                .join("");
+
+            document.getElementById("workoutPlan").innerHTML = [
+                workoutAdvice,
+                total.protein < goal.protein * 0.6 ? copy().nextProtein : copy().nextBalanced,
+                copy().nextBalanced
+            ].map((item) => `<li><strong>${item}</strong><span>${workoutDays} days/week</span></li>`).join("");
+
+            if (state.meals.length === 0) {
+                elements.nextAction.textContent = copy().nextLow;
+            } else if (total.protein < goal.protein * 0.55) {
+                elements.nextAction.textContent = copy().nextProtein;
+            } else if (total.calories > goal.calories * 0.82) {
+                elements.nextAction.textContent = copy().nextCalories;
+            } else {
+                elements.nextAction.textContent = copy().nextBalanced;
+            }
+        }
+
+        function renderProfileForm() {
+            Object.entries(state.profile).forEach(([key, value]) => {
+                const field = elements.profileForm.elements[key];
+                if (field) {
+                    field.value = value;
+                }
+            });
+        }
+
+        function analyzeMeal() {
+            const mealNames = copy().sampleMeals;
+            const seed = Math.floor(Math.random() * mealNames.length);
+            const calories = 430 + seed * 85 + Number(state.profile.workouts) * 12;
+            const protein = 24 + seed * 5 + (state.profile.diet === "highProtein" ? 8 : 0);
+            const carbs = 38 + seed * 8;
+            const fat = 14 + seed * 4;
+
+            elements.mealName.value = mealNames[seed];
+            elements.caloriesInput.value = calories;
+            elements.proteinInput.value = protein;
+            elements.carbsInput.value = carbs;
+            elements.fatInput.value = fat;
+            elements.analysisNote.textContent = copy().analysisNote;
+        }
+
+        function saveMeal() {
+            const meal = {
+                name: elements.mealName.value.trim() || copy().sampleMeals[0],
+                calories: Number(elements.caloriesInput.value) || 0,
+                protein: Number(elements.proteinInput.value) || 0,
+                carbs: Number(elements.carbsInput.value) || 0,
+                fat: Number(elements.fatInput.value) || 0,
+                savedAt: new Date().toISOString()
+            };
+            state.meals.unshift(meal);
+            saveState();
+            render();
+            elements.analysisNote.textContent = copy().savedMeal;
+            showView("dashboard");
+        }
+
+        function saveProfile() {
+            const formData = new FormData(elements.profileForm);
+            state.profile = {
+                age: Number(formData.get("age")),
+                sex: formData.get("sex"),
+                height: Number(formData.get("height")),
+                weight: Number(formData.get("weight")),
+                activity: formData.get("activity"),
+                workouts: Number(formData.get("workouts")),
+                goal: formData.get("goal"),
+                diet: formData.get("diet")
+            };
+            saveState();
+            render();
+            elements.nextAction.textContent = copy().profileSaved;
+            showView("coach");
+        }
+
+        elements.navButtons.forEach((button) => {
+            button.addEventListener("click", () => showView(button.dataset.viewTarget));
+        });
+
+        document.querySelectorAll("[data-go-scan]").forEach((button) => {
+            button.addEventListener("click", () => showView("scan"));
+        });
+
+        elements.languageButtons.forEach((button) => {
+            button.addEventListener("click", () => setLanguage(button.dataset.lang));
+        });
+
+        elements.mealPhoto.addEventListener("change", () => {
+            const file = elements.mealPhoto.files[0];
+            if (!file) return;
+            elements.photoPreview.src = URL.createObjectURL(file);
+            elements.photoPreview.hidden = false;
+            elements.uploadEmpty.hidden = true;
+        });
+
+        elements.resetPhotoButton.addEventListener("click", () => {
+            elements.mealPhoto.value = "";
+            elements.photoPreview.removeAttribute("src");
+            elements.photoPreview.hidden = true;
+            elements.uploadEmpty.hidden = false;
+        });
+
+        elements.analyzeButton.addEventListener("click", analyzeMeal);
+        elements.saveMealButton.addEventListener("click", saveMeal);
+        elements.saveProfileButton.addEventListener("click", saveProfile);
+        elements.clearDataButton.addEventListener("click", () => {
+            state = structuredClone(defaultState);
+            saveState();
+            render();
+        });
+
+        setLanguage(language);
+        render();
+    </script>
+</body>
+</html>
